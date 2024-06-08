@@ -14,16 +14,16 @@ jobs:
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build docker image
-        run: docker build -t go-deploy-image .
+        run: docker build -t oye123/go-deploy .
       - name: Push image to docker hub
-        run: docker push go-deploy-image:latest
+        run: docker push oye123/go-deploy:latest
   deploy:
     needs: build
     runs-on: self-hosted
     steps:
       - name: Pull docker image
-        run: docker pull go-deploy-image:latest
+        run: docker pull oye123/go-deploy:latest
       - name: Delete old container
         run: docker rm -f go-deploy-container  
       - name: Run docker container          
-        run: docker run -d -p 4040:4040 --name go-deploy-container go-deploy-image
+        run: docker run -d -p 4040:4040 --name go-deploy-container oye123/go-deploy
