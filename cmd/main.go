@@ -29,8 +29,8 @@ func main() {
 	http.HandleFunc("/api/hello", helloHandler)
 	http.HandleFunc("/api/goodbye", goodbyeHandler)
 
-	log.Println("Starting server on :8080...")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	log.Println("Starting server on :4040...")
+	if err := http.ListenAndServe(":4040", nil); err != nil {
 		log.Fatalf("Could not start server: %s\n", err.Error())
 	}
 }
