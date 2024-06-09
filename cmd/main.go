@@ -13,6 +13,7 @@ type Response struct {
 
 // helloHandler responds with a hello message
 func helloHandler(w http.ResponseWriter, r *http.Request) {
+	a := 1
 	response := Response{Message: "Hello, World!"}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
