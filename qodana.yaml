@@ -26,6 +26,6 @@ profile:
 #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
 
 #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-linter: jetbrains/qodana-go:2024.1-eap
+linter: jetbrains/qodana-go:latest
 
 fixesStrategy: apply
