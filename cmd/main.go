@@ -17,7 +17,8 @@ type Response struct {
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	secret := os.Getenv("MY_SECRET")
 	port := os.Getenv("PORT")
-	response := Response{Message: fmt.Sprintf("Hello, World! %s from %s", secret, port)}
+	anotherSecret := os.Getenv("MY_ANOTHER_SECRET")
+	response := Response{Message: fmt.Sprintf("Hello, World! from %s, secret is %s, another secret is %s", port, secret, anotherSecret)}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
