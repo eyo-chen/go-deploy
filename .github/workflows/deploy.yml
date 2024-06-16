@@ -58,5 +58,5 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: 'go-deploy-service'
-          cluster: 'go-deoloy-cluster'
+          cluster: 'go-deploy-cluster'
           wait-for-service-stability: true
