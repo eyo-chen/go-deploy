@@ -33,12 +33,13 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           ECR_REPOSITORY: 'go-deploy'
         run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Output image
+        run: |
+          echo "Image: ${{ steps.build-image.outputs.image }}"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
@@ -47,6 +48,10 @@ jobs:
           task-definition: 'go-depoloy-task-definition.json'
           container-name: 'go-deploy-container'
           image: ${{ steps.build-image.outputs.image }}
+      
+      - name: Output task definition
+        run: |
+          echo "Task Definition: ${{ steps.task-def.outputs.task-definition }}"
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
