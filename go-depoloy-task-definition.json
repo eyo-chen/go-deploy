@@ -1,5 +1,5 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-1:907296455513:task-definition/go-depoloy-task-definition:6",
+  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-1:907296455513:task-definition/go-depoloy-task-definition:8",
   "containerDefinitions": [
       {
           "name": "go-deploy-container",
@@ -33,18 +33,37 @@
                   "valueFrom": "arn:aws:ssm:ap-northeast-1:907296455513:parameter/go-deploy-secret"
               }
           ],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-group": "/ecs/go-depoloy-task-definition",
+                  "awslogs-create-group": "true",
+                  "awslogs-region": "ap-northeast-1",
+                  "awslogs-stream-prefix": "ecs"
+              },
+              "secretOptions": []
+          },
           "systemControls": []
       }
   ],
   "family": "go-depoloy-task-definition",
   "executionRoleArn": "arn:aws:iam::907296455513:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
-  "revision": 6,
+  "revision": 8,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
       {
+          "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+      },
+      {
+          "name": "ecs.capability.execution-role-awslogs"
+      },
+      {
           "name": "com.amazonaws.ecs.capability.ecr-auth"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
       },
       {
           "name": "ecs.capability.execution-role-ecr-pull"
@@ -57,6 +76,9 @@
       },
       {
           "name": "ecs.capability.task-eni"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
       }
   ],
   "placementConstraints": [],
@@ -70,10 +92,10 @@
   "cpu": "1024",
   "memory": "3072",
   "runtimePlatform": {
-      "cpuArchitecture": "ARM64",
+      "cpuArchitecture": "X86_64",
       "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2024-06-16T07:50:48.202Z",
+  "registeredAt": "2024-06-16T08:31:54.227Z",
   "registeredBy": "arn:aws:iam::907296455513:user/Eyo",
   "tags": []
 }
