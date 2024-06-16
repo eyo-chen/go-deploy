@@ -25,7 +25,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 // goodbyeHandler responds with a goodbye message
 func goodbyeHandler(w http.ResponseWriter, r *http.Request) {
-	response := Response{Message: "Goodbye, World!"}
+	response := Response{Message: "Goodbye, World! update"}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
