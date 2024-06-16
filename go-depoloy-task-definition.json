@@ -1,9 +1,9 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-1:907296455513:task-definition/go-depoloy-task-definition:2",
+  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-1:907296455513:task-definition/go-depoloy-task-definition:6",
   "containerDefinitions": [
       {
           "name": "go-deploy-container",
-          "image": "907296455513.dkr.ecr.ap-northeast-1.amazonaws.com/go-deploy:latest",
+          "image": "907296455513.dkr.ecr.ap-northeast-1.amazonaws.com/go-deploy:5856b1108cb42e669c49bc1aeec7539a031b79fb",
           "cpu": 0,
           "portMappings": [
               {
@@ -25,7 +25,6 @@
                   "value": "hahahaha"
               }
           ],
-          "environmentFiles": [],
           "mountPoints": [],
           "volumesFrom": [],
           "secrets": [
@@ -34,14 +33,13 @@
                   "valueFrom": "arn:aws:ssm:ap-northeast-1:907296455513:parameter/go-deploy-secret"
               }
           ],
-          "ulimits": [],
           "systemControls": []
       }
   ],
   "family": "go-depoloy-task-definition",
   "executionRoleArn": "arn:aws:iam::907296455513:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
-  "revision": 2,
+  "revision": 6,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -75,7 +73,7 @@
       "cpuArchitecture": "ARM64",
       "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2024-06-15T16:51:23.316Z",
+  "registeredAt": "2024-06-16T07:50:48.202Z",
   "registeredBy": "arn:aws:iam::907296455513:user/Eyo",
   "tags": []
 }
