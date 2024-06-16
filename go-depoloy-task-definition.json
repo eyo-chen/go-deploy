@@ -1,0 +1,81 @@
+{
+  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-1:907296455513:task-definition/go-depoloy-task-definition:2",
+  "containerDefinitions": [
+      {
+          "name": "go-deploy-container",
+          "image": "907296455513.dkr.ecr.ap-northeast-1.amazonaws.com/go-deploy:latest",
+          "cpu": 0,
+          "portMappings": [
+              {
+                  "name": "go-deploy-container-4040-tcp",
+                  "containerPort": 4040,
+                  "hostPort": 4040,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": true,
+          "environment": [
+              {
+                  "name": "PORT",
+                  "value": "4040"
+              },
+              {
+                  "name": "MY_SECRET",
+                  "value": "hahahaha"
+              }
+          ],
+          "environmentFiles": [],
+          "mountPoints": [],
+          "volumesFrom": [],
+          "secrets": [
+              {
+                  "name": "MY_ANOTHER_SECRET",
+                  "valueFrom": "arn:aws:ssm:ap-northeast-1:907296455513:parameter/go-deploy-secret"
+              }
+          ],
+          "ulimits": [],
+          "systemControls": []
+      }
+  ],
+  "family": "go-depoloy-task-definition",
+  "executionRoleArn": "arn:aws:iam::907296455513:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "revision": 2,
+  "volumes": [],
+  "status": "ACTIVE",
+  "requiresAttributes": [
+      {
+          "name": "com.amazonaws.ecs.capability.ecr-auth"
+      },
+      {
+          "name": "ecs.capability.execution-role-ecr-pull"
+      },
+      {
+          "name": "ecs.capability.secrets.ssm.environment-variables"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+      },
+      {
+          "name": "ecs.capability.task-eni"
+      }
+  ],
+  "placementConstraints": [],
+  "compatibilities": [
+      "EC2",
+      "FARGATE"
+  ],
+  "requiresCompatibilities": [
+      "FARGATE"
+  ],
+  "cpu": "1024",
+  "memory": "3072",
+  "runtimePlatform": {
+      "cpuArchitecture": "ARM64",
+      "operatingSystemFamily": "LINUX"
+  },
+  "registeredAt": "2024-06-15T16:51:23.316Z",
+  "registeredBy": "arn:aws:iam::907296455513:user/Eyo",
+  "tags": []
+}

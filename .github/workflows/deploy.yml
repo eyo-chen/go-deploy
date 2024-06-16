@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - main                                                  
 
 jobs:
   deploy:
@@ -41,28 +41,22 @@ jobs:
         run: |
           echo "Image: ${{ steps.build-image.outputs.image }}"
 
-      - name: Download task definition
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: 'go-depoloy-task-definition.json'
+          container-name: 'go-deploy-container'
+          image: ${{ steps.build-image.outputs.image }}
+      
+      - name: Output task definition
         run: |
-          aws ecs describe-task-definition --task-definition go-deploy-task-definition --query taskDefinition > task-definition.json
-
-      - name: Update task definition with new image
-        run: |
-          jq --arg IMAGE "${{ steps.build-image.outputs.image }}" '.containerDefinitions[0].image = $IMAGE' task-definition.json > new-task-definition.json
-          mv new-task-definition.json task-definition.json
-
-      - name: Register new task definition
-        id: register-task-def
-        run: |
-          aws ecs register-task-definition --cli-input-json file://task-definition.json
-
-      - name: Output task definition ARN
-        run: |
-          echo "Task Definition ARN: ${{ steps.register-task-def.outputs.taskDefinitionArn }}"
+          echo "Task Definition: ${{ steps.task-def.outputs.task-definition }}"
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.register-task-def.outputs.taskDefinitionArn }}
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: 'go-deploy-service'
-          cluster: 'go-deoloy-cluster'
+          cluster: 'go-deploy-cluster'
           wait-for-service-stability: true
