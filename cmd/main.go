@@ -8,13 +8,23 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
+	_ "github.com/golang-migrate/migrate/source/file"
+	"github.com/joho/godotenv"
 )
 
 // Response structure
 type Response struct {
 	Message string `json:"message"`
+}
+
+type user struct {
+	ID           int    `json:"id"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	PasswordHash string `json:"password_hash"`
 }
 
 // helloHandler responds with a hello message
@@ -34,15 +44,43 @@ func goodbyeHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// getUserHandler fetches a user from the database
+func getUserHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		email := r.URL.Query().Get("email")
+		if email == "" {
+			http.Error(w, "missing email parameter", http.StatusBadRequest)
+			return
+		}
+
+		var u user
+		query := "SELECT id, name, email, password_hash FROM users WHERE email = ?"
+		err := db.QueryRow(query, email).Scan(&u.ID, &u.Name, &u.Email, &u.PasswordHash)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				http.Error(w, "user not found", http.StatusNotFound)
+			} else {
+				http.Error(w, "server error", http.StatusInternalServerError)
+			}
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(u)
+	}
+}
+
 func main() {
-	http.HandleFunc("/api/hello", helloHandler)
-	http.HandleFunc("/api/goodbye", goodbyeHandler)
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file: %s\n", err.Error())
+	}
 
 	log.Println("connecting to database...")
 	db, err := newMysqlDB()
 	if err != nil {
 		log.Fatalf("Could not connect to database: %s\n", err.Error())
 	}
+	defer db.Close()
 
 	log.Println("applying schema migrations...")
 	if err := applySchemaMigrations(db); err != nil {
@@ -53,6 +91,10 @@ func main() {
 	if err := applyDataMigrations(db); err != nil {
 		log.Fatalf("Could not apply data migrations: %s\n", err.Error())
 	}
+
+	http.HandleFunc("/api/hello", helloHandler)
+	http.HandleFunc("/api/goodbye", goodbyeHandler)
+	http.HandleFunc("/api/user", getUserHandler(db))
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -69,9 +111,11 @@ func newMysqlDB() (*sql.DB, error) {
 		"name":     os.Getenv("DB_NAME"),
 		"user":     os.Getenv("DB_USER"),
 		"password": os.Getenv("DB_PASSWORD"),
+		"host":     os.Getenv("DB_HOST"),
+		"port":     os.Getenv("DB_PORT"),
 	}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:54321)/%s?parseTime=true", config["user"], config["password"], config["name"])
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", config["user"], config["password"], config["host"], config["port"], config["name"])
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
