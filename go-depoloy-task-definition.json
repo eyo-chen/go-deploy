@@ -1,9 +1,9 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-1:907296455513:task-definition/go-depoloy-task-definition:8",
+  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-1:907296455513:task-definition/go-depoloy-task-definition:9",
   "containerDefinitions": [
       {
           "name": "go-deploy-container",
-          "image": "907296455513.dkr.ecr.ap-northeast-1.amazonaws.com/go-deploy:5856b1108cb42e669c49bc1aeec7539a031b79fb",
+          "image": "907296455513.dkr.ecr.ap-northeast-1.amazonaws.com/go-deploy:66fcc531e2c77408c6dd00bddf81646295be9238",
           "cpu": 0,
           "portMappings": [
               {
@@ -23,6 +23,10 @@
               {
                   "name": "MY_SECRET",
                   "value": "hahahaha"
+              },
+              {
+                  "name": "DB_PORT",
+                  "value": "3306"
               }
           ],
           "mountPoints": [],
@@ -31,6 +35,22 @@
               {
                   "name": "MY_ANOTHER_SECRET",
                   "valueFrom": "arn:aws:ssm:ap-northeast-1:907296455513:parameter/go-deploy-secret"
+              },
+              {
+                  "name": "DB_NAME",
+                  "valueFrom": "arn:aws:ssm:ap-northeast-1:907296455513:parameter/go-deploy-db-name"
+              },
+              {
+                  "name": "DB_USER",
+                  "valueFrom": "arn:aws:ssm:ap-northeast-1:907296455513:parameter/go-deploy-db-user"
+              },
+              {
+                  "name": "DB_PASSWORD",
+                  "valueFrom": "arn:aws:ssm:ap-northeast-1:907296455513:parameter/go-deploy-db-password"
+              },
+              {
+                  "name": "DB_HOST",
+                  "valueFrom": "arn:aws:ssm:ap-northeast-1:907296455513:parameter/go-deploy-db-host"
               }
           ],
           "logConfiguration": {
@@ -40,8 +60,7 @@
                   "awslogs-create-group": "true",
                   "awslogs-region": "ap-northeast-1",
                   "awslogs-stream-prefix": "ecs"
-              },
-              "secretOptions": []
+              }
           },
           "systemControls": []
       }
@@ -49,7 +68,7 @@
   "family": "go-depoloy-task-definition",
   "executionRoleArn": "arn:aws:iam::907296455513:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
-  "revision": 8,
+  "revision": 9,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -95,7 +114,7 @@
       "cpuArchitecture": "X86_64",
       "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2024-06-16T08:31:54.227Z",
+  "registeredAt": "2024-06-16T08:43:01.131Z",
   "registeredBy": "arn:aws:iam::907296455513:user/Eyo",
   "tags": []
 }
