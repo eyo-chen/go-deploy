@@ -14,6 +14,7 @@ FROM gcr.io/distroless/base-debian11 AS build-release-stage
 WORKDIR /
 
 COPY --from=build-stage /app/main ./main
+COPY --from=build-stage /app/migrations ./migrations
 
 USER nonroot:nonroot
 
