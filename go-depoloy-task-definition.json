@@ -27,6 +27,10 @@
               {
                   "name": "DB_PORT",
                   "value": "3306"
+              },
+              {
+                  "name": "GO_ENV",
+                  "value": "production"
               }
           ],
           "mountPoints": [],
