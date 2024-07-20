@@ -71,8 +71,11 @@ func getUserHandler(db *sql.DB) http.HandlerFunc {
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file: %s\n", err.Error())
+	env := os.Getenv("GO_ENV")
+	if env != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Fatalf("Error loading .env file: %s\n", err.Error())
+		}
 	}
 
 	log.Println("connecting to database...")
