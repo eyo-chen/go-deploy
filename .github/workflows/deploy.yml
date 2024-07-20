@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:           
-      - mainttttt                                       
+      - main                                     
 
 jobs:
   deploy:
