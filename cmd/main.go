@@ -12,7 +12,6 @@ import (
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
-	"github.com/joho/godotenv"
 )
 
 // Response structure
@@ -25,6 +24,15 @@ type user struct {
 	Name         string `json:"name"`
 	Email        string `json:"email"`
 	PasswordHash string `json:"password_hash"`
+}
+
+// loggingMiddleware logs the details of each request
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Host: %s, RemoteAddr: %s, RequestURI: %s, Method: %s, Proto: %s, Header: %s", r.Host, r.RemoteAddr, r.RequestURI, r.Method, r.Proto, r.Header)
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 // helloHandler responds with a hello message
@@ -71,13 +79,6 @@ func getUserHandler(db *sql.DB) http.HandlerFunc {
 }
 
 func main() {
-	env := os.Getenv("GO_ENV")
-	if env != "production" {
-		if err := godotenv.Load(); err != nil {
-			log.Fatalf("Error loading .env file: %s\n", err.Error())
-		}
-	}
-
 	log.Println("connecting to database...")
 	db, err := newMysqlDB()
 	if err != nil {
@@ -95,16 +96,19 @@ func main() {
 		log.Fatalf("Could not apply data migrations: %s\n", err.Error())
 	}
 
-	http.HandleFunc("/api/hello", helloHandler)
-	http.HandleFunc("/api/goodbye", goodbyeHandler)
-	http.HandleFunc("/api/user", getUserHandler(db))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/hello", helloHandler)
+	mux.HandleFunc("/api/goodbye", goodbyeHandler)
+	mux.HandleFunc("/api/user", getUserHandler(db))
+
+	loggedMux := loggingMiddleware(mux)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "4040"
 	}
 	log.Println("Starting server on port", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), loggedMux); err != nil {
 		log.Fatalf("Could not start server: %s\n", err.Error())
 	}
 }
